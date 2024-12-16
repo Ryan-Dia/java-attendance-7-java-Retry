@@ -2,6 +2,8 @@ package attendance.utils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public final class KoreanDateFormatter {
@@ -22,21 +24,28 @@ public final class KoreanDateFormatter {
     public static String loadDateConverter(LocalDateTime loadDateTime) {
         String dayOfWeekKo = DAY_OF_WEEK_KO_MAP.getOrDefault(loadDateTime.getDayOfWeek(), "Not a day of a week");
         String dayOfMonth = String.valueOf(loadDateTime.getDayOfMonth());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        final LocalTime localTime = loadDateTime.toLocalTime();
+        final String formattedTime = localTime.format(formatter);
         if (dayOfMonth.length() == 1) {
             dayOfMonth = "0" + dayOfMonth;
-        }
-        String minute = String.valueOf(loadDateTime.getMinute());
-        if (minute.length() == 1) {
-            minute = "0" + minute;
-        }
-        String time = loadDateTime.getHour() + ":" + minute;
-        if (time.equals("0:00")) {
-            time = "--:--";
         }
         return String.format("%s월 %s일 %s요일 %s",
                 loadDateTime.getMonthValue(),
                 dayOfMonth,
                 dayOfWeekKo,
-                time);
+                formattedTime);
+    }
+
+    public static String loadDateConverterWithoutTime(LocalDateTime loadDateTime) {
+        String dayOfWeekKo = DAY_OF_WEEK_KO_MAP.getOrDefault(loadDateTime.getDayOfWeek(), "Not a day of a week");
+        String dayOfMonth = String.valueOf(loadDateTime.getDayOfMonth());
+        if (dayOfMonth.length() == 1) {
+            dayOfMonth = "0" + dayOfMonth;
+        }
+        return String.format("%s월 %s일 %s요일",
+                loadDateTime.getMonthValue(),
+                dayOfMonth,
+                dayOfWeekKo);
     }
 }
