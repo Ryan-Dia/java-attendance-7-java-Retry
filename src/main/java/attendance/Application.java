@@ -1,7 +1,15 @@
 package attendance;
 
+import attendance.controller.AttendanceController;
+import java.io.IOException;
+
 public class Application {
     public static void main(String[] args) {
-        // TODO: 프로그램 구현
+        try {
+            AttendanceController attendanceController = new AttendanceController();
+            attendanceController.run();
+        } catch (IOException e) {
+            System.out.println("[ERROR] 마크다운 파일에 문제가 있습니다.");
+        }
     }
 }
