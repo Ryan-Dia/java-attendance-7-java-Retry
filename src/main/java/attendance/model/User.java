@@ -1,5 +1,6 @@
 package attendance.model;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,6 +30,13 @@ public class User {
         return Punishment.findByPunishMent(stateTotalCount.get(State.ABSENCE));
     }
 
+    public void attend(String startTime, LocalDateTime todayTime) {
+        attendanceRegisters.attend(startTime, todayTime);
+    }
+
+    public AttendanceRegister findAttendanceByToday(LocalDateTime todayTime) {
+        return attendanceRegisters.findAttendanceByToday(todayTime);
+    }
 
     @Override
     public boolean equals(final Object o) {

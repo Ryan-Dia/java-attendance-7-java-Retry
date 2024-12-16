@@ -31,4 +31,8 @@ public final class OutputView {
             System.out.printf("%s 대상자 입니다.", punishment.getPunishmentName());
         }
     }
+
+    public static void printAttendanceCheck(String time, String category) {
+        System.out.printf("%s (%s)", time, category);
+    }
 }

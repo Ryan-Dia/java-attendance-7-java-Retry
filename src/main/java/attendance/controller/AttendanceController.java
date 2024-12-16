@@ -10,10 +10,14 @@ import attendance.model.AttendanceRegisters;
 import attendance.model.Command;
 import attendance.model.User;
 import attendance.model.Users;
+import attendance.utils.KoreanDateFormatter;
 import attendance.utils.LoopTemplate;
+import attendance.utils.OpenChecker;
 import attendance.view.InputView;
 import attendance.view.OutputView;
+import camp.nextstep.edu.missionutils.DateTimes;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +41,21 @@ public class AttendanceController {
     }
 
     private void runCheckAttendance(Users users) {
-        final User nickname = getNickname(users);
-        check(InputView.readSchoolStartTime());
+        final LocalDateTime now = DateTimes.now();
+        OpenChecker.checkCampusOpen(now);
+
+        final User user = getNickNameWithoutRetry(users);
+        final String schoolStartTime = readSchoolStartTime();
+        user.attend(schoolStartTime, now);
+
+        final AttendanceRegister attendanceRegister = user.findAttendanceByToday(now);
+        final String time = KoreanDateFormatter.loadDateConverter(attendanceRegister.getDatetime());
+        final String category = attendanceRegister.getState().getCategory();
+        OutputView.printAttendanceCheck(time, category);
+    }
+
+    private String readSchoolStartTime() {
+        return InputView.readSchoolStartTime();
     }
 
     private String check(String input) {
@@ -55,6 +72,10 @@ public class AttendanceController {
 
     private User getNickname(Users users) {
         return LoopTemplate.tryCatch(() -> users.findUserByNickname(InputView.readNickname()));
+    }
+
+    private User getNickNameWithoutRetry(Users users) {
+        return users.findUserByNickname(InputView.readNickname());
     }
 
 

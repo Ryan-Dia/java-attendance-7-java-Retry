@@ -1,5 +1,10 @@
 package attendance.model;
 
+import static java.util.stream.Collectors.toList;
+
+import attendance.error.ErrorMessages;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +19,7 @@ public class AttendanceRegisters {
 
     private List<AttendanceRegister> sort(List<AttendanceRegister> attendanceRegisters) {
         return attendanceRegisters.stream()
-                .sorted((a, b) -> a.getDatetime().getDayOfMonth() - b.getDatetime().getDayOfMonth()).toList();
+                .sorted((a, b) -> a.getDatetime().getDayOfMonth() - b.getDatetime().getDayOfMonth()).collect(toList());
     }
 
     public Map<State, Integer> calculateAttendance() {
@@ -34,6 +39,26 @@ public class AttendanceRegisters {
         box.put(State.LATENESS, (int) late);
         box.put(State.ABSENCE, (int) absence);
         return box;
+    }
+
+    public void attend(String startTime, LocalDateTime todayTime) {
+        final LocalDate todayDate = todayTime.toLocalDate();
+        if (isAlreadyPresent(todayDate)) {
+            throw new IllegalArgumentException(ErrorMessages.ALREADY_PRESENT.getMessage());
+        }
+        attendanceRegisters.add(AttendanceRegister.attend(startTime, todayTime));
+    }
+
+    private boolean isAlreadyPresent(final LocalDate todayDate) {
+        return attendanceRegisters.stream()
+                .anyMatch(register -> register.getDatetime().toLocalDate().equals(todayDate));
+    }
+
+    public AttendanceRegister findAttendanceByToday(LocalDateTime todayTime) {
+        return attendanceRegisters.stream()
+                .filter(register -> register.getDatetime().toLocalDate().equals(todayTime.toLocalDate()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.INVALID_FORMAT.getMessage()));
     }
 
 
