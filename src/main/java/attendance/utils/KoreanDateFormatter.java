@@ -26,7 +26,10 @@ public final class KoreanDateFormatter {
         String dayOfMonth = String.valueOf(loadDateTime.getDayOfMonth());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         final LocalTime localTime = loadDateTime.toLocalTime();
-        final String formattedTime = localTime.format(formatter);
+        String formattedTime = localTime.format(formatter);
+        if (formattedTime.equals("00:00")) {
+            formattedTime = "--:--";
+        }
         if (dayOfMonth.length() == 1) {
             dayOfMonth = "0" + dayOfMonth;
         }

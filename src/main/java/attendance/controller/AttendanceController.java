@@ -29,10 +29,21 @@ import java.util.Map.Entry;
 
 public class AttendanceController {
 
+    private static final String QUIT = "Q";
+
     public void run() throws IOException {
         final Users users = getUsers();
-        final String command = getCommand();
-        runCommand(command, users);
+        runLoop(users);
+    }
+
+    private void runLoop(Users users) {
+        while (true) {
+            final String command = getCommand();
+            if (command.equals(QUIT)) {
+                break;
+            }
+            runCommand(command, users);
+        }
     }
 
     private void runCommand(String command, Users users) {
@@ -52,7 +63,6 @@ public class AttendanceController {
         final LocalDate date = getDateForAdjustment();
         final LocalTime time = getTimeForAdjustment();
         final LocalDateTime localDateTime = LocalDateTime.of(date, time);
-        System.out.println(localDateTime);
         final AttendanceRegister attendanceRegister = user.adjustAttendanceTime(localDateTime);
         OutputView.printAdjustedAttendanceTime(new AttendanceRegisterWithPreviousDto(attendanceRegister));
     }
@@ -92,22 +102,6 @@ public class AttendanceController {
 
     private String readSchoolStartTime() {
         return InputView.readSchoolStartTime();
-    }
-
-    private String check(String input) {
-        final String[] split = input.split(":");
-        if (Integer.parseInt(split[0]) > 12) {
-            throw new IllegalArgumentException(ErrorMessages.INVALID_FORMAT.getMessage());
-        }
-        if (Integer.parseInt(split[1]) > 60) {
-            throw new IllegalArgumentException(ErrorMessages.INVALID_FORMAT.getMessage());
-        }
-        return input;
-    }
-
-
-    private User getNickname(Users users) {
-        return LoopTemplate.tryCatch(() -> users.findUserByNickname(InputView.readNickname()));
     }
 
     private User getNickNameWithoutRetry(Users users) {

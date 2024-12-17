@@ -19,7 +19,7 @@ public enum Punishment {
 
     public static Punishment findByPunishMent(int absenceCount) {
         return Arrays.stream(Punishment.values())
-                .filter(value -> value.getAbsenceCount() > absenceCount)
+                .filter(value -> value.getAbsenceCount() < absenceCount)
                 .findFirst()
                 .orElse(null);
     }

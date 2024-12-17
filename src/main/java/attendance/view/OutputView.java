@@ -19,7 +19,7 @@ public final class OutputView {
     public static void printAttendanceRegister(AttendanceRegisterDto attendanceRegisterDto) {
         final LocalDateTime datetime = attendanceRegisterDto.localDateTime();
         final String category = attendanceRegisterDto.state().getCategory();
-        System.out.println(KoreanDateFormatter.loadDateConverter(datetime) + " " + "(" + category + ")");
+        System.out.printf("%s (%s)%n", KoreanDateFormatter.loadDateConverter(datetime), category);
     }
 
     public static void printStatTotalCount(Map<State, Integer> totalCount) {
@@ -31,7 +31,7 @@ public final class OutputView {
 
     public static void printPunishment(Punishment punishment) {
         if (punishment != Punishment.NONE) {
-            System.out.printf("%s 대상자 입니다.", punishment.getPunishmentName());
+            System.out.printf("%s 대상자 입니다.%n", punishment.getPunishmentName());
         }
     }
 
@@ -42,12 +42,12 @@ public final class OutputView {
     public static void printAdjustedAttendanceTime(
             AttendanceRegisterWithPreviousDto attendanceRegisterWithPreviousDto) {
         final AttendanceRegisterDto previousAttendanceRegister = attendanceRegisterWithPreviousDto.attendanceRegisterDto();
-        final LocalTime localTime = previousAttendanceRegister.localDateTime().toLocalTime();
+        final LocalTime localTime = attendanceRegisterWithPreviousDto.localDateTime().toLocalTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         System.out.printf("%n%s (%s)",
                 KoreanDateFormatter.loadDateConverter(previousAttendanceRegister.localDateTime()),
                 previousAttendanceRegister.state().getCategory());
-        System.out.printf("-> %s (%s) 수정 완료!", localTime.format(formatter),
+        System.out.printf(" -> %s (%s) 수정 완료!%n", localTime.format(formatter),
                 attendanceRegisterWithPreviousDto.stateCategory());
     }
 }
