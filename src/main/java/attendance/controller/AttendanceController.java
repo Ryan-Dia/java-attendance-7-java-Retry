@@ -4,6 +4,7 @@ import static attendance.model.UserReader.createRegisters;
 import static attendance.model.UserReader.readUsers;
 
 import attendance.dto.AttendanceRegisterDto;
+import attendance.dto.AttendanceRegisterWithPreviousDto;
 import attendance.error.ErrorMessages;
 import attendance.model.AttendanceRegister;
 import attendance.model.AttendanceRegisters;
@@ -17,7 +18,10 @@ import attendance.view.InputView;
 import attendance.view.OutputView;
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +41,38 @@ public class AttendanceController {
         }
         if (Command.CHECK_ATTENDANCE.getCommandOrder().equals(command)) {
             runCheckAttendance(users);
+        }
+        if (Command.EDIT_ATTENDANCE.getCommandOrder().equals(command)) {
+            runAttendanceAdjustment(users);
+        }
+    }
+
+    private void runAttendanceAdjustment(Users users) {
+        final User user = getNickNameWithoutRetry(users);
+        final LocalDate date = getDateForAdjustment();
+        final LocalTime time = getTimeForAdjustment();
+        final LocalDateTime localDateTime = LocalDateTime.of(date, time);
+        System.out.println(localDateTime);
+        final AttendanceRegister attendanceRegister = user.adjustAttendanceTime(localDateTime);
+        OutputView.printAdjustedAttendanceTime(new AttendanceRegisterWithPreviousDto(attendanceRegister));
+    }
+
+    private LocalDate getDateForAdjustment() {
+        try {
+            final String date = InputView.readDateForAdjustment();
+            return LocalDate.of(2024, 12, Integer.parseInt(date));
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException(ErrorMessages.INVALID_FORMAT.getMessage());
+        }
+    }
+
+    private LocalTime getTimeForAdjustment() {
+        try {
+            final String time = InputView.readTimeForAdjustment();
+            final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+            return LocalTime.parse(time, dateTimeFormatter);
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException(ErrorMessages.INVALID_FORMAT.getMessage());
         }
     }
 

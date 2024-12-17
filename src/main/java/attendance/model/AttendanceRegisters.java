@@ -49,6 +49,20 @@ public class AttendanceRegisters {
         attendanceRegisters.add(AttendanceRegister.attend(startTime, todayTime));
     }
 
+
+    public AttendanceRegister adjustAttendanceTime(LocalDateTime localDateTime) {
+        final AttendanceRegister previousAttendanceRegister = attendanceRegisters.stream()
+                .filter(register -> register.getDatetime().toLocalDate().equals(localDateTime.toLocalDate()))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.INVALID_FORMAT.getMessage()));
+        final AttendanceRegister newAttendanceRegister = AttendanceRegister.adjustAttendanceTime(localDateTime,
+                previousAttendanceRegister);
+
+        attendanceRegisters.remove(previousAttendanceRegister);
+        attendanceRegisters.add(newAttendanceRegister);
+        return newAttendanceRegister;
+    }
+
     private boolean isAlreadyPresent(final LocalDate todayDate) {
         return attendanceRegisters.stream()
                 .anyMatch(register -> register.getDatetime().toLocalDate().equals(todayDate));

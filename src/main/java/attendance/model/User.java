@@ -38,6 +38,11 @@ public class User {
         return attendanceRegisters.findAttendanceByToday(todayTime);
     }
 
+
+    public AttendanceRegister adjustAttendanceTime(LocalDateTime localDateTime) {
+        return attendanceRegisters.adjustAttendanceTime(localDateTime);
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {

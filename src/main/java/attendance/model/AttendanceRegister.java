@@ -10,11 +10,27 @@ import java.util.Objects;
 public class AttendanceRegister {
     private final LocalDateTime datetime;
     private final State state;
+    private final AttendanceRegister previousRegister;
 
     public AttendanceRegister(final LocalDateTime datetime, final State state) {
         this.datetime = datetime;
         this.state = state;
+        this.previousRegister = null;
     }
+
+
+    private AttendanceRegister(final LocalDateTime datetime, final State state,
+                               final AttendanceRegister previousRegister) {
+        this.datetime = datetime;
+        this.state = state;
+        this.previousRegister = previousRegister;
+    }
+
+    public static AttendanceRegister adjustAttendanceTime(LocalDateTime localDateTime,
+                                                          AttendanceRegister previousRegister) {
+        return new AttendanceRegister(localDateTime, State.findByLocalDateTime(localDateTime), previousRegister);
+    }
+
 
     public static AttendanceRegister from(final String timeString) {
         final String[] splitTime = timeString.split(" ");
@@ -45,6 +61,11 @@ public class AttendanceRegister {
 
     public State getState() {
         return state;
+    }
+
+
+    public AttendanceRegister getPreviousRegister() {
+        return previousRegister;
     }
 
     @Override

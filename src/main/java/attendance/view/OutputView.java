@@ -1,10 +1,13 @@
 package attendance.view;
 
 import attendance.dto.AttendanceRegisterDto;
+import attendance.dto.AttendanceRegisterWithPreviousDto;
 import attendance.model.Punishment;
 import attendance.model.State;
 import attendance.utils.KoreanDateFormatter;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,5 +37,17 @@ public final class OutputView {
 
     public static void printAttendanceCheck(String time, String category) {
         System.out.printf("%s (%s)", time, category);
+    }
+
+    public static void printAdjustedAttendanceTime(
+            AttendanceRegisterWithPreviousDto attendanceRegisterWithPreviousDto) {
+        final AttendanceRegisterDto previousAttendanceRegister = attendanceRegisterWithPreviousDto.attendanceRegisterDto();
+        final LocalTime localTime = previousAttendanceRegister.localDateTime().toLocalTime();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        System.out.printf("%n%s (%s)",
+                KoreanDateFormatter.loadDateConverter(previousAttendanceRegister.localDateTime()),
+                previousAttendanceRegister.state().getCategory());
+        System.out.printf("-> %s (%s) 수정 완료!", localTime.format(formatter),
+                attendanceRegisterWithPreviousDto.stateCategory());
     }
 }
