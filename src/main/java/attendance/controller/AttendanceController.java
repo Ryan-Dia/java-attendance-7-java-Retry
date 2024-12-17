@@ -5,10 +5,13 @@ import static attendance.model.UserReader.readUsers;
 
 import attendance.dto.AttendanceRegisterDto;
 import attendance.dto.AttendanceRegisterWithPreviousDto;
+import attendance.dto.UserDto;
 import attendance.error.ErrorMessages;
 import attendance.model.AttendanceRegister;
 import attendance.model.AttendanceRegisters;
 import attendance.model.Command;
+import attendance.model.Punishment;
+import attendance.model.State;
 import attendance.model.User;
 import attendance.model.Users;
 import attendance.utils.KoreanDateFormatter;
@@ -55,6 +58,26 @@ public class AttendanceController {
         }
         if (Command.EDIT_ATTENDANCE.getCommandOrder().equals(command)) {
             runAttendanceAdjustment(users);
+        }
+        if (Command.CONFIRMATION_OF_THOSE_AT_RISK_OF_EXPULSION.getCommandOrder().equals(command)) {
+            runConfirmationOfPersonsAtRiskOfExpulsion(users);
+        }
+    }
+
+    private void runConfirmationOfPersonsAtRiskOfExpulsion(Users users) {
+        final List<UserDto> riskyUsers = users.confirmationOfPersonsAtRiskOfExpulsion()
+                .stream()
+                .map(value -> new UserDto(value))
+                .toList();
+
+        System.out.println("제적 위험자 조회 결과");
+        for (UserDto riskyUser : riskyUsers) {
+            final Map<State, Integer> stateTotalCount = riskyUser.stateTotalCount();
+            final Integer absenceCount = stateTotalCount.get(State.ABSENCE);
+            final Integer latenessCount = stateTotalCount.get(State.LATENESS);
+            final Punishment punishment = riskyUser.punishment();
+            System.out.printf("%s: 결석 %d회, 지각 %d회 (%s)%n", riskyUser.userNickname(), absenceCount, latenessCount,
+                    punishment.getPunishmentName());
         }
     }
 

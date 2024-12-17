@@ -2,12 +2,14 @@ package attendance.view;
 
 import attendance.dto.AttendanceRegisterDto;
 import attendance.dto.AttendanceRegisterWithPreviousDto;
+import attendance.dto.UserDto;
 import attendance.model.Punishment;
 import attendance.model.State;
 import attendance.utils.KoreanDateFormatter;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -49,5 +51,16 @@ public final class OutputView {
                 previousAttendanceRegister.state().getCategory());
         System.out.printf(" -> %s (%s) 수정 완료!%n", localTime.format(formatter),
                 attendanceRegisterWithPreviousDto.stateCategory());
+    }
+
+    public static void printConfirmationOfPersonsAtRiskOfExpulsion(List<UserDto> userDto) {
+        for (UserDto user : userDto) {
+            final Map<State, Integer> stateTotalCount = user.stateTotalCount();
+            final Integer absenceCount = stateTotalCount.get(State.ABSENCE);
+            final Integer latenessCount = stateTotalCount.get(State.LATENESS);
+            final Punishment punishment = user.punishment();
+            System.out.printf("%s: 결석 %d회, 지각 %d회 (%s)%n", user.userNickname(), absenceCount, latenessCount,
+                    punishment.getPunishmentName());
+        }
     }
 }

@@ -1,6 +1,7 @@
 package attendance.model;
 
 import attendance.error.ErrorMessages;
+import java.util.Comparator;
 import java.util.List;
 
 public class Users {
@@ -17,6 +18,17 @@ public class Users {
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessages.UNREGISTERED_NAME.getMessage()));
     }
+
+    public List<User> confirmationOfPersonsAtRiskOfExpulsion() {
+        return users.stream()
+                .filter(user -> user.getPunishment() != Punishment.NONE)
+                .sorted(Comparator.comparingInt((User user) -> user.getPunishment().getAbsenceCount()).reversed())
+                .sorted(Comparator.comparingInt(
+                                (User user) -> user.getAttendanceRegisters().calculateAttendance().get(State.LATENESS))
+                        .reversed())
+                .toList();
+    }
+
 
     public List<User> getUsers() {
         return users;

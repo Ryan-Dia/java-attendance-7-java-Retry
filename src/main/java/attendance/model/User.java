@@ -43,6 +43,7 @@ public class User {
         return attendanceRegisters.adjustAttendanceTime(localDateTime);
     }
 
+
     @Override
     public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
