@@ -2,7 +2,7 @@ package attendance.dto;
 
 import attendance.model.Punishment;
 import attendance.model.State;
-import attendance.model.User;
+import attendance.model.user.User;
 import java.util.Map;
 
 public record UserDto(Map<State, Integer> stateTotalCount, Punishment punishment, String userNickname) {

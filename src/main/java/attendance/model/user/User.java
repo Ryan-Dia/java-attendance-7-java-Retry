@@ -1,5 +1,7 @@
-package attendance.model;
+package attendance.model.user;
 
+import attendance.model.Punishment;
+import attendance.model.State;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;

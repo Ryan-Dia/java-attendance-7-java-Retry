@@ -1,8 +1,9 @@
-package attendance.model;
+package attendance.model.user;
 
 import static java.util.stream.Collectors.toList;
 
 import attendance.error.ErrorMessages;
+import attendance.model.State;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;

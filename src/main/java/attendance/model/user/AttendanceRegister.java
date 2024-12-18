@@ -1,6 +1,7 @@
-package attendance.model;
+package attendance.model.user;
 
 import attendance.error.ErrorMessages;
+import attendance.model.State;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

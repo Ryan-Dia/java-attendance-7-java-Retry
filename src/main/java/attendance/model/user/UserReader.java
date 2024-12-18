@@ -1,7 +1,8 @@
-package attendance.model;
+package attendance.model.user;
 
 import static java.util.stream.Collectors.toList;
 
+import attendance.model.State;
 import attendance.utils.MarkdownReader;
 import attendance.utils.WeekdayChecker;
 import camp.nextstep.edu.missionutils.DateTimes;

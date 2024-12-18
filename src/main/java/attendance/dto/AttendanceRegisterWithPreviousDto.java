@@ -1,6 +1,6 @@
 package attendance.dto;
 
-import attendance.model.AttendanceRegister;
+import attendance.model.user.AttendanceRegister;
 import java.time.LocalDateTime;
 
 public record AttendanceRegisterWithPreviousDto(LocalDateTime localDateTime, String stateCategory,

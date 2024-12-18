@@ -1,8 +1,10 @@
-package attendance.model;
+package attendance.model.user;
 
-import static attendance.model.UserReader.createRegisters;
+import static attendance.model.user.UserReader.createRegisters;
 
 import attendance.error.ErrorMessages;
+import attendance.model.Punishment;
+import attendance.model.State;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
