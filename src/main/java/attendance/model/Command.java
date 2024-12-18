@@ -15,8 +15,20 @@ public enum Command {
         this.command = command;
     }
 
+    public static boolean isCheckAttendance(String command) {
+        return Command.CHECK_ATTENDANCE.getCommandOrder().equals(command);
+    }
+
+    public static boolean isEditAttendance(String command) {
+        return Command.EDIT_ATTENDANCE.getCommandOrder().equals(command);
+    }
+
     public static boolean isCommandCheckAttendanceRecord(String command) {
         return Command.CHECK_ATTENDANCE_RECORD.getCommandOrder().equals(command);
+    }
+
+    public static boolean isConfirmationOfThoseAtRiskOfExpulsion(String command) {
+        return Command.CONFIRMATION_OF_THOSE_AT_RISK_OF_EXPULSION.getCommandOrder().equals(command);
     }
 
     public String getCommandOrder() {

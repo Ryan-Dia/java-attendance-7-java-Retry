@@ -47,16 +47,16 @@ public class AttendanceController {
     }
 
     private void runCommand(String command, Users users) {
+        if (Command.isCheckAttendance(command)) {
+            runCheckAttendance(users);
+        }
+        if (Command.isEditAttendance(command)) {
+            runAttendanceAdjustment(users);
+        }
         if (Command.isCommandCheckAttendanceRecord(command)) {
             runCommandCheckAttendanceRecord(users);
         }
-        if (Command.CHECK_ATTENDANCE.getCommandOrder().equals(command)) {
-            runCheckAttendance(users);
-        }
-        if (Command.EDIT_ATTENDANCE.getCommandOrder().equals(command)) {
-            runAttendanceAdjustment(users);
-        }
-        if (Command.CONFIRMATION_OF_THOSE_AT_RISK_OF_EXPULSION.getCommandOrder().equals(command)) {
+        if (Command.isConfirmationOfThoseAtRiskOfExpulsion(command)) {
             runConfirmationOfPersonsAtRiskOfExpulsion(users);
         }
     }
