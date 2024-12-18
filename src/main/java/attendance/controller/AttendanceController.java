@@ -10,8 +10,6 @@ import attendance.error.ErrorMessages;
 import attendance.model.AttendanceRegister;
 import attendance.model.AttendanceRegisters;
 import attendance.model.Command;
-import attendance.model.Punishment;
-import attendance.model.State;
 import attendance.model.User;
 import attendance.model.Users;
 import attendance.utils.KoreanDateFormatter;
@@ -67,18 +65,9 @@ public class AttendanceController {
     private void runConfirmationOfPersonsAtRiskOfExpulsion(Users users) {
         final List<UserDto> riskyUsers = users.confirmationOfPersonsAtRiskOfExpulsion()
                 .stream()
-                .map(value -> new UserDto(value))
+                .map(UserDto::new)
                 .toList();
-
-        System.out.println("제적 위험자 조회 결과");
-        for (UserDto riskyUser : riskyUsers) {
-            final Map<State, Integer> stateTotalCount = riskyUser.stateTotalCount();
-            final Integer absenceCount = stateTotalCount.get(State.ABSENCE);
-            final Integer latenessCount = stateTotalCount.get(State.LATENESS);
-            final Punishment punishment = riskyUser.punishment();
-            System.out.printf("%s: 결석 %d회, 지각 %d회 (%s)%n", riskyUser.userNickname(), absenceCount, latenessCount,
-                    punishment.getPunishmentName());
-        }
+        OutputView.printConfirmationOfPersonsAtRiskOfExpulsion(riskyUsers);
     }
 
     private void runAttendanceAdjustment(Users users) {
@@ -130,7 +119,6 @@ public class AttendanceController {
     private User getNickNameWithoutRetry(Users users) {
         return users.findUserByNickname(InputView.readNickname());
     }
-
 
     private void runCommandCheckAttendanceRecord(Users users) {
         final User user = getUser(users);
