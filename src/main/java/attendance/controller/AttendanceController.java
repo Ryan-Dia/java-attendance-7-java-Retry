@@ -37,6 +37,15 @@ public class AttendanceController {
         runLoop(users);
     }
 
+    private Users getUsers() throws IOException {
+        List<User> users = new ArrayList<>();
+        final Map<String, List<String>> innerUsers = readUsers();
+        for (Entry<String, List<String>> user : innerUsers.entrySet()) {
+            users.add(new User(user.getKey(), createRegisters(user.getValue())));
+        }
+        return new Users(users);
+    }
+
     private void runLoop(Users users) {
         while (true) {
             final String command = getCommand();
@@ -45,6 +54,10 @@ public class AttendanceController {
             }
             runCommand(command, users);
         }
+    }
+
+    private String getCommand() {
+        return LoopTemplate.tryCatch(InputView::readCommand);
     }
 
     private void runCommand(String command, Users users) {
@@ -62,12 +75,36 @@ public class AttendanceController {
         }
     }
 
-    private void runConfirmationOfPersonsAtRiskOfExpulsion(Users users) {
-        final List<UserDto> riskyUsers = users.confirmationOfPersonsAtRiskOfExpulsion()
-                .stream()
-                .map(UserDto::new)
-                .toList();
-        OutputView.printConfirmationOfPersonsAtRiskOfExpulsion(riskyUsers);
+    private void runCommandCheckAttendanceRecord(Users users) {
+        final User user = getUser(users);
+        final AttendanceRegisters attendanceRegisters = user.getAttendanceRegisters();
+        for (AttendanceRegister attendanceRegister : attendanceRegisters.getAttendanceRegisters()) {
+            OutputView.printAttendanceRegister(new AttendanceRegisterDto(attendanceRegister));
+        }
+        OutputView.printStatTotalCount(user.getStateTotalCount());
+        OutputView.printPunishment(user.getPunishment());
+    }
+
+    private User getUser(Users users) {
+        return LoopTemplate.tryCatch(() -> users.findUserByNickname(InputView.readNickname()));
+    }
+
+    private void runCheckAttendance(Users users) {
+        final LocalDateTime now = DateTimes.now();
+        OpenChecker.checkCampusOpen(now);
+
+        final User user = getNickNameWithoutRetry(users);
+        final String schoolStartTime = readSchoolStartTime();
+        user.attend(schoolStartTime, now);
+
+        final AttendanceRegister attendanceRegister = user.findAttendanceByToday(now);
+        final String time = KoreanDateFormatter.loadDateConverter(attendanceRegister.getDatetime());
+        final String category = attendanceRegister.getState().getCategory();
+        OutputView.printAttendanceCheck(time, category);
+    }
+
+    private String readSchoolStartTime() {
+        return InputView.readSchoolStartTime();
     }
 
     private void runAttendanceAdjustment(Users users) {
@@ -77,6 +114,10 @@ public class AttendanceController {
         final LocalDateTime localDateTime = LocalDateTime.of(date, time);
         final AttendanceRegister attendanceRegister = user.adjustAttendanceTime(localDateTime);
         OutputView.printAdjustedAttendanceTime(new AttendanceRegisterWithPreviousDto(attendanceRegister));
+    }
+
+    private User getNickNameWithoutRetry(Users users) {
+        return users.findUserByNickname(InputView.readNickname());
     }
 
     private LocalDate getDateForAdjustment() {
@@ -98,53 +139,11 @@ public class AttendanceController {
         }
     }
 
-    private void runCheckAttendance(Users users) {
-        final LocalDateTime now = DateTimes.now();
-        OpenChecker.checkCampusOpen(now);
-
-        final User user = getNickNameWithoutRetry(users);
-        final String schoolStartTime = readSchoolStartTime();
-        user.attend(schoolStartTime, now);
-
-        final AttendanceRegister attendanceRegister = user.findAttendanceByToday(now);
-        final String time = KoreanDateFormatter.loadDateConverter(attendanceRegister.getDatetime());
-        final String category = attendanceRegister.getState().getCategory();
-        OutputView.printAttendanceCheck(time, category);
-    }
-
-    private String readSchoolStartTime() {
-        return InputView.readSchoolStartTime();
-    }
-
-    private User getNickNameWithoutRetry(Users users) {
-        return users.findUserByNickname(InputView.readNickname());
-    }
-
-    private void runCommandCheckAttendanceRecord(Users users) {
-        final User user = getUser(users);
-        final AttendanceRegisters attendanceRegisters = user.getAttendanceRegisters();
-        for (AttendanceRegister attendanceRegister : attendanceRegisters.getAttendanceRegisters()) {
-            OutputView.printAttendanceRegister(new AttendanceRegisterDto(attendanceRegister));
-        }
-        OutputView.printStatTotalCount(user.getStateTotalCount());
-        OutputView.printPunishment(user.getPunishment());
-    }
-
-    private User getUser(Users users) {
-        return LoopTemplate.tryCatch(() -> users.findUserByNickname(InputView.readNickname()));
-    }
-
-
-    private String getCommand() {
-        return LoopTemplate.tryCatch(InputView::readCommand);
-    }
-
-    private Users getUsers() throws IOException {
-        List<User> users = new ArrayList<>();
-        final Map<String, List<String>> innerUsers = readUsers();
-        for (Entry<String, List<String>> user : innerUsers.entrySet()) {
-            users.add(new User(user.getKey(), createRegisters(user.getValue())));
-        }
-        return new Users(users);
+    private void runConfirmationOfPersonsAtRiskOfExpulsion(Users users) {
+        final List<UserDto> riskyUsers = users.confirmationOfPersonsAtRiskOfExpulsion()
+                .stream()
+                .map(UserDto::new)
+                .toList();
+        OutputView.printConfirmationOfPersonsAtRiskOfExpulsion(riskyUsers);
     }
 }
