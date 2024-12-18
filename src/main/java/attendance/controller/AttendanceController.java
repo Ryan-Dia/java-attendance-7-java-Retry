@@ -1,8 +1,5 @@
 package attendance.controller;
 
-import static attendance.model.UserReader.createRegisters;
-import static attendance.model.UserReader.readUsers;
-
 import attendance.dto.AttendanceRegisterDto;
 import attendance.dto.AttendanceRegisterWithPreviousDto;
 import attendance.dto.UserDto;
@@ -23,27 +20,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
 
 public class AttendanceController {
 
     private static final String QUIT = "Q";
 
     public void run() throws IOException {
-        final Users users = getUsers();
+        final Users users = Users.getInstance();
         runLoop(users);
-    }
-
-    private Users getUsers() throws IOException {
-        List<User> users = new ArrayList<>();
-        final Map<String, List<String>> innerUsers = readUsers();
-        for (Entry<String, List<String>> user : innerUsers.entrySet()) {
-            users.add(new User(user.getKey(), createRegisters(user.getValue())));
-        }
-        return new Users(users);
     }
 
     private void runLoop(Users users) {

@@ -20,7 +20,7 @@ public final class UserReader {
     }
 
 
-    public static Map<String, List<String>> readUsers() throws IOException {
+    public static Map<String, List<String>> readUsersFile() throws IOException {
         Map<String, List<String>> users = new HashMap<>();
         final List<String[]> info = readFile();
         for (String[] userInfo : info) {
