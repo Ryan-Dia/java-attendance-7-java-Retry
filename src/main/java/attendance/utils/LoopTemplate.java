@@ -8,12 +8,10 @@ public final class LoopTemplate {
     }
 
     public static <T> T tryCatch(final Supplier<T> callBack) {
-        while (true) {
-            try {
-                return callBack.get();
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
+        try {
+            return callBack.get();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 }
