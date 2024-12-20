@@ -27,6 +27,10 @@ public class User {
         return attendanceRegisters.calculateAttendance();
     }
 
+    public Map<State, Integer> getStateTotalCountWithoutConsidered() {
+        return attendanceRegisters.calculateAttendanceWithoutConsidered();
+    }
+
     public Punishment getPunishment() {
         final Map<State, Integer> stateTotalCount = getStateTotalCount();
         return Punishment.findByPunishMent(stateTotalCount.get(State.ABSENCE));

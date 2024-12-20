@@ -67,7 +67,7 @@ public class AttendanceController {
         for (AttendanceRegister attendanceRegister : attendanceRegisters.getAttendanceRegisters()) {
             OutputView.printAttendanceRegister(new AttendanceRegisterDto(attendanceRegister));
         }
-        OutputView.printStatTotalCount(user.getStateTotalCount());
+        OutputView.printStatTotalCount(user.getStateTotalCountWithoutConsidered());
         OutputView.printPunishment(user.getPunishment());
     }
 

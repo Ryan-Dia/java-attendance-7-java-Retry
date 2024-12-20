@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AttendanceRegisters {
 
@@ -40,6 +41,17 @@ public class AttendanceRegisters {
         box.put(State.LATENESS, (int) late);
         box.put(State.ABSENCE, (int) absence);
         return box;
+    }
+
+    public Map<State, Integer> calculateAttendanceWithoutConsidered() {
+        return attendanceRegisters.stream()
+                .collect(Collectors.groupingBy(
+                        AttendanceRegister::getState,
+                        Collectors.collectingAndThen(
+                                Collectors.counting(),
+                                Long::intValue
+                        )
+                ));
     }
 
     public void attend(String startTime, LocalDateTime todayTime) {

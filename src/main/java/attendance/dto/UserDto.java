@@ -5,8 +5,9 @@ import attendance.model.State;
 import attendance.model.user.User;
 import java.util.Map;
 
-public record UserDto(Map<State, Integer> stateTotalCount, Punishment punishment, String userNickname) {
+public record UserDto(Map<State, Integer> stateTotalCountWithoutConsidered, Punishment punishment,
+                      String userNickname) {
     public UserDto(User user) {
-        this(user.getStateTotalCount(), user.getPunishment(), user.getNickname());
+        this(user.getStateTotalCountWithoutConsidered(), user.getPunishment(), user.getNickname());
     }
 }

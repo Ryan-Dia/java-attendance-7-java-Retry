@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class Users {
+    private static final int ABSENCE_STANDARD_COUNT = 3;
     private final List<User> users;
 
     public Users(final List<User> users) {
@@ -38,12 +39,29 @@ public class Users {
     public List<User> confirmationOfPersonsAtRiskOfExpulsion() {
         return users.stream()
                 .filter(user -> user.getPunishment() != Punishment.NONE)
-                .sorted(Comparator.comparingInt((User user) -> user.getPunishment().getAbsenceCount()).reversed())
-                .sorted(Comparator.comparingInt(
-                                (User user) -> user.getAttendanceRegisters().calculateAttendance().get(State.LATENESS))
-                        .reversed())
+                .sorted(
+                        punishmentOrder
+                                .thenComparing(absenceCountWithLateness)
+                                .thenComparing(User::getNickname)
+                )
                 .toList();
     }
+
+    private final Comparator<User> punishmentOrder = Comparator
+            .comparingInt((User user) -> user.getPunishment().getAbsenceCount())
+            .reversed();
+
+    private final Comparator<User> absenceCountWithLateness = Comparator
+            .comparingInt((User user) -> {
+                final Integer latenessCount = user.getAttendanceRegisters()
+                        .calculateAttendanceWithoutConsidered()
+                        .getOrDefault(State.LATENESS, 0);
+                final Integer absenceCount = user.getAttendanceRegisters()
+                        .calculateAttendanceWithoutConsidered()
+                        .getOrDefault(State.ABSENCE, 0);
+                return absenceCount + latenessCount / ABSENCE_STANDARD_COUNT;
+            })
+            .reversed();
 
     public List<User> getUsers() {
         return users;

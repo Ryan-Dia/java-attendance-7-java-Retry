@@ -19,7 +19,6 @@ public class AttendanceRegister {
         this.previousRegister = null;
     }
 
-
     private AttendanceRegister(final LocalDateTime datetime, final State state,
                                final AttendanceRegister previousRegister) {
         this.datetime = datetime;

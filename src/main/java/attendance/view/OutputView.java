@@ -56,9 +56,9 @@ public final class OutputView {
     public static void printConfirmationOfPersonsAtRiskOfExpulsion(List<UserDto> userDto) {
         System.out.println("\n제적 위험자 조회 결과");
         for (UserDto user : userDto) {
-            final Map<State, Integer> stateTotalCount = user.stateTotalCount();
-            final Integer absenceCount = stateTotalCount.get(State.ABSENCE);
-            final Integer latenessCount = stateTotalCount.get(State.LATENESS);
+            final Map<State, Integer> stateTotalCount = user.stateTotalCountWithoutConsidered();
+            final Integer absenceCount = stateTotalCount.getOrDefault(State.ABSENCE, 0);
+            final Integer latenessCount = stateTotalCount.getOrDefault(State.LATENESS, 0);
             final Punishment punishment = user.punishment();
             System.out.printf("- %s: 결석 %d회, 지각 %d회 (%s)%n", user.userNickname(), absenceCount, latenessCount,
                     punishment.getPunishmentName());
