@@ -44,7 +44,7 @@ public class AttendanceRegisters {
     }
 
     public Map<State, Integer> calculateAttendanceWithoutConsidered() {
-        return attendanceRegisters.stream()
+        Map<State, Integer> box = attendanceRegisters.stream()
                 .collect(Collectors.groupingBy(
                         AttendanceRegister::getState,
                         Collectors.collectingAndThen(
@@ -52,6 +52,12 @@ public class AttendanceRegisters {
                                 Long::intValue
                         )
                 ));
+        
+        for (State state : State.values()) {
+            box.putIfAbsent(state, 0);
+        }
+
+        return box;
     }
 
     public void attend(String startTime, LocalDateTime todayTime) {
