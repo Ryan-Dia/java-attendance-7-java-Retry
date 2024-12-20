@@ -6,7 +6,7 @@ public enum Punishment {
     WEEDING("제적", 5),
     INTERVIEW("면담", 2),
     WARNING("경고", 1),
-    NONE("없음", -1);
+    NONE("없음", 0);
 
 
     private final String punishmentName;
@@ -21,7 +21,7 @@ public enum Punishment {
         return Arrays.stream(Punishment.values())
                 .filter(value -> value.getAbsenceCount() < absenceCount)
                 .findFirst()
-                .orElse(null);
+                .orElse(NONE);
     }
 
     public String getPunishmentName() {
